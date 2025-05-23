@@ -1,6 +1,7 @@
 import streamlit as st
 from datetime import datetime
 import requests
+import pandas as pd
 
 '''
 # NY TaxiFare
@@ -55,6 +56,11 @@ with col2:
     dropoff_lat = st.number_input("Drop-off Latitude", format="%.6f", value=40.769802)
     dropoff_lon = st.number_input("Drop-off Longitude", format="%.6f", value=-73.984365)
 
+df = pd.DataFrame([
+    [pickup_lat, pickup_lon],
+    [dropoff_lat, dropoff_lon]
+    ],
+    columns=['lat','lon'])
 # 2. Params for API request
 
 params = {
@@ -74,6 +80,7 @@ if st.button("Predict Fare"):
         response.raise_for_status()
         prediction = response.json().get("fare")
         st.success(f"💰 Estimated Fare: ${prediction}")
+        st.map(df, latitude="col1", longitude="col2")
 
     except Exception as e:
         st.error(f'Error: {e}')
